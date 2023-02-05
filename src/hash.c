@@ -63,15 +63,17 @@ size_t rehash(hash_t* hash){
         if(!hash_aux) return ERROR;
 
         elemento_t* elemento_aux;
+        char* clave;
         lista_iterador_t* iterador = NULL;
 
-        for(int i = 0; i<hash_aux->capacidad; i++){
-            if(!lista_vacia(hash_aux->tabla[i])){
-                iterador = lista_iterador_crear(hash_aux->tabla[i]);
+        for(int i = 0; i<hash->capacidad; i++){
+            if(!lista_vacia(hash->tabla[i])){
+                iterador = lista_iterador_crear(hash->tabla[i]);
                 
                 while(lista_iterador_tiene_siguiente(iterador)){
                     elemento_aux = lista_iterador_elemento_actual(iterador);
-                    if(hash_insertar(hash_aux, elemento_aux->clave, elemento_aux->elemento)!=0){
+                    clave = elemento_aux->clave;
+                    if(hash_insertar(hash_aux, clave, hash_obtener(hash, clave))!=0){
                         hash_destruir(hash_aux);
                         lista_iterador_destruir(iterador);
                         return ERROR;
@@ -86,6 +88,7 @@ size_t rehash(hash_t* hash){
         hash_t hash_pointer = *hash; 
         *hash = *hash_aux;
         *hash_aux = hash_pointer;
+        hash_aux->destructor = NULL;
         hash_destruir(hash_aux);
         return EXITO;
     }
@@ -132,8 +135,6 @@ int hash_insertar(hash_t* hash, const char* clave, void* elemento){
 
     lista_insertar(hash->tabla[posicion], elemento_nuevo_hash);
     hash->cantidad_elementos++;
-
-    if((hash->cantidad_listas/hash->capacidad)>FACTOR_CARGA) rehash(hash);
 
     return EXITO;
 }

@@ -25,6 +25,7 @@ void destruir_string(void* string){
 bool iterar_hasta_2(hash_t* hash,const char* clave, void* aux){
     if(!hash || !clave) return true;
     size_t* cantidad = aux;
+    *cantidad += 1;
     if(*cantidad==2) return true;
     return false;
 }
@@ -227,7 +228,7 @@ void pruebasIteradorHash(){
     pa2m_afirmar(hash_con_cada_clave(h, mostrar_consola, NULL)==4, "Se mostraron 4 consolas, puedo iterar con aux NULL");
 
     size_t cantidad_iterados = 0;
-    pa2m_afirmar(hash_con_cada_clave(h, iterar_hasta_2, &cantidad_iterados)==4, "Se iteraron cantidad_iterados consolas");
+    pa2m_afirmar(hash_con_cada_clave(h, iterar_hasta_2, &cantidad_iterados)==cantidad_iterados, "Se iteraron la cantidad correcta de consolas");
 
 
 
@@ -254,6 +255,7 @@ void pruebasNULLHash(){
 
     hash_destruir(h);
 }
+
 
 int main(){
     pa2m_nuevo_grupo("Pruebas de creacion Hash");
